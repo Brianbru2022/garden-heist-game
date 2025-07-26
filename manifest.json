@@ -1,1 +1,16 @@
-{}
+{
+  "name": "The Garden Heist",
+  "short_name": "Garden Heist",
+  "description": "A Wentworth Castle Gardens Mystery Game.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fdfaf0",
+  "theme_color": "#36454F",
+  "icons": [
+    {
+      "src": "images/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
