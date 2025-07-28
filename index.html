@@ -1118,22 +1118,63 @@
                 }
             };
 
-            // --- GAME STATE ---
-            const gameState = {
-                detectiveName: '',
-                currentScreen: 'loading',
-                currentClueIndex: 0,
-                correctAnswers: 0,
-                incorrectGuesses: 0,
-                finalScore: 0,
-                finalRank: '',
-                playerSelection: null,
-                eliminatedSuspects: [],
-                eliminatedObjects: [],
-                progressBarInterval: null,
-                correctnessAnimationInterval: null,
-            };
+            
 
+            // --- GAME STATE ---
+const gameState = {
+    detectiveName: '',
+    currentScreen: 'loading',
+    currentClueIndex: 0,
+    correctAnswers: 0,
+    incorrectGuesses: 0,
+    finalScore: 0,
+    finalRank: '',
+    playerSelection: null,
+    eliminatedSuspects: [],
+    eliminatedObjects: [],
+    progressBarInterval: null,
+    correctnessAnimationInterval: null
+};
+
+// --- SAVE GAME STATE ---
+function saveGameState() {
+  try {
+    const stateToSave = {
+      currentScreen: gameState.currentScreen,
+      currentClueIndex: gameState.currentClueIndex,
+      correctAnswers: gameState.correctAnswers,
+      incorrectGuesses: gameState.incorrectGuesses,
+      finalScore: gameState.finalScore,
+      finalRank: gameState.finalRank,
+      playerSelection: gameState.playerSelection,
+      eliminatedSuspects: gameState.eliminatedSuspects,
+      eliminatedObjects: gameState.eliminatedObjects,
+      detectiveName: gameState.detectiveName
+    };
+    localStorage.setItem('gardenHeistProgress', JSON.stringify(stateToSave));
+  } catch (e) {
+    console.error("Failed to save game state", e);
+  }
+}
+
+
+// --- LOAD SAVED GAME STATE IF EXISTS ---
+    const saved = localStorage.getItem('gardenHeistProgress');
+    if (saved) {
+      try {
+        const savedState = JSON.parse(saved);
+        Object.assign(gameState, savedState);
+        if (gameState.currentScreen && typeof showScreen === 'function') {
+          showScreen(gameState.currentScreen);
+        }
+      } catch (e) {
+        console.warn("Couldn't load saved game. Starting fresh.", e);
+        showScreen('welcome');
+      }
+    } else {
+      showScreen('welcome');
+    }
+            
             // --- GAME DATA ---
             const gameData = {
                 characters: [
