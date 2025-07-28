@@ -1159,21 +1159,30 @@ function saveGameState() {
 
 
 // --- LOAD SAVED GAME STATE IF EXISTS ---
-    const saved = localStorage.getItem('gardenHeistProgress');
-    if (saved) {
-      try {
-        const savedState = JSON.parse(saved);
-        Object.assign(gameState, savedState);
-        if (gameState.currentScreen && typeof showScreen === 'function') {
-          showScreen(gameState.currentScreen);
-        }
-      } catch (e) {
-        console.warn("Couldn't load saved game. Starting fresh.", e);
-        showScreen('welcome');
-      }
-    } else {
-      showScreen('welcome');
-    }
+    function init() {
+                // First, always show the loading screen
+                navigateTo('loading');
+
+                // Preload all assets, and only when done, decide which screen to show next
+                preloadAssets(() => {
+                    const saved = localStorage.getItem('gardenHeistProgress');
+                    if (saved) {
+                        try {
+                            const savedState = JSON.parse(saved);
+                            Object.assign(gameState, savedState);
+                            // Navigate to the screen from the save file
+                            navigateTo(gameState.currentScreen || 'welcome');
+                        } catch (e) {
+                            console.warn("Couldn't load saved game. Starting fresh.", e);
+                            // If the save file is corrupted, go to welcome
+                            navigateTo('welcome');
+                        }
+                    } else {
+                        // If no save file exists, go to welcome
+                        navigateTo('welcome');
+                    }
+                });
+            }
             
             // --- GAME DATA ---
             const gameData = {
