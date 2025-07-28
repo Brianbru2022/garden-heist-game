@@ -779,6 +779,11 @@
             <p>The celebrated detective trio—the sharp-witted Hazel, the over-enthusiastic Moo, and you, their brilliant human partner—are called in. You must follow a trail of riddles through the sprawling gardens, eliminating crafty animal suspects and the bizarre objects they might have used to pull off the fruity felony.</p>
             <input id="detectiveName" placeholder="Detective Name" aria-label="Detective Name">
             <button id="start-button" class="big-btn">Start Investigation</button>
+
+<div id="welcome-button-group" class="button-group" style="display: none;">
+    <button id="continue-button" class="big-btn">Continue Game</button>
+    <button id="new-game-button" class="big-btn secondary">New Game</button>
+</div>
         </div>
 
         <div id="story-screen" class="screen">
@@ -1007,6 +1012,8 @@
                 },
                 buttons: {
                     start: document.getElementById('start-button'),
+                    continueGame: document.getElementById('continue-button'),
+                    newGame: document.getElementById('new-game-button'),
                     storyContinue: document.getElementById('story-continue-button'),
                     introStoryNext: document.getElementById('intro-story-next-button'),
                     directionsNext: document.getElementById('directions-next-button'),
@@ -1160,27 +1167,33 @@ function saveGameState() {
 
 // --- LOAD SAVED GAME STATE IF EXISTS ---
     function init() {
-                // First, always show the loading screen
                 navigateTo('loading');
-
-                // Preload all assets, and only when done, decide which screen to show next
                 preloadAssets(() => {
                     const saved = localStorage.getItem('gardenHeistProgress');
+                    let inProgress = false; // Assume not in progress by default
+
                     if (saved) {
                         try {
                             const savedState = JSON.parse(saved);
-                            Object.assign(gameState, savedState);
-                            // Navigate to the screen from the save file
-                            navigateTo(gameState.currentScreen || 'welcome');
+                            // A game is in progress if they've started but not finished
+                            if (savedState.currentClueIndex > 0 && savedState.currentClueIndex < gameData.clues.length) {
+                                inProgress = true;
+                            }
                         } catch (e) {
-                            console.warn("Couldn't load saved game. Starting fresh.", e);
-                            // If the save file is corrupted, go to welcome
-                            navigateTo('welcome');
+                            // Ignore corrupted save files
                         }
-                    } else {
-                        // If no save file exists, go to welcome
-                        navigateTo('welcome');
                     }
+
+                    if (inProgress) {
+                        // If a game is in progress, show the Continue/New Game buttons
+                        elements.buttons.start.style.display = 'none';
+                        document.getElementById('welcome-button-group').style.display = 'flex';
+                    } else {
+                        // Otherwise, show the normal Start button
+                        elements.buttons.start.style.display = 'inline-block';
+                        document.getElementById('welcome-button-group').style.display = 'none';
+                    }
+                    navigateTo('welcome');
                 });
             }
             
