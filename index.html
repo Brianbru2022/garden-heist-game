@@ -2708,17 +2708,18 @@ function saveGameState() {
 
             // --- EVENT LISTENERS ---
             elements.buttons.start.addEventListener('click', () => {
-                // Reset game state for a new game
-                gameState.detectiveName = '';
-                gameState.currentScreen = 'welcome';
-                gameState.currentClueIndex = 0;
-                gameState.correctAnswers = 0;
-                gameState.incorrectGuesses = 0;
-                gameState.finalScore = 0;
-                gameState.finalRank = '';
-                gameState.playerSelection = null;
-                gameState.eliminatedObjects = [];
-                gameState.eliminatedSuspects = [];
+                // Only reset the game state IF we are starting a genuinely new game
+                if (gameState.currentClueIndex === 0) {
+                    gameState.detectiveName = '';
+                    gameState.currentScreen = 'welcome';
+                    gameState.correctAnswers = 0;
+                    gameState.incorrectGuesses = 0;
+                    gameState.finalScore = 0;
+                    gameState.finalRank = '';
+                    gameState.playerSelection = null;
+                    gameState.eliminatedObjects = [];
+                    gameState.eliminatedSuspects = [];
+                }
 
                 const name = elements.inputs.detectiveName.value.trim();
                 gameState.detectiveName = name || 'Brave Detective';
