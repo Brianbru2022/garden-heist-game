@@ -2726,7 +2726,10 @@ function saveGameState() {
             elements.buttons.showObjects.addEventListener('click', () => showGrid('objects'));
 
             elements.buttons.closeGrid.addEventListener('click', closeGrid);
-            elements.buttons.confirmSelection.addEventListener('click', confirmSelection);
+            elements.buttons.confirmSelection.addEventListener('click', () => {
+    confirmSelection();
+    saveGameState();
+});
 
             elements.buttons.feedbackContinue.addEventListener('click', () => {
                 updateProgressScreen();
