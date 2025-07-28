@@ -2739,6 +2739,40 @@ function saveGameState() {
 
                 navigateTo('story');
             });
+            elements.buttons.continueGame.addEventListener('click', () => {
+                // Load the saved game data and navigate to the saved screen
+                const saved = localStorage.getItem('gardenHeistProgress');
+                if (saved) {
+                    try {
+                        const savedState = JSON.parse(saved);
+                        Object.assign(gameState, savedState);
+                        navigateTo(gameState.currentScreen || 'welcome');
+                    } catch (e) {
+                        // If save is corrupted, start a new game instead
+                        navigateTo('story');
+                    }
+                }
+            });
+
+            elements.buttons.newGame.addEventListener('click', () => {
+                if (confirm("Are you sure you want to start a new game? Your saved progress will be lost.")) {
+                    // Clear the old save and start a new game
+                    localStorage.removeItem('gardenHeistProgress');
+                    // Reset game state
+                    Object.assign(gameState, {
+                        currentClueIndex: 0,
+                        correctAnswers: 0,
+                        incorrectGuesses: 0,
+                        finalScore: 0,
+                        finalRank: '',
+                        playerSelection: null,
+                        eliminatedObjects: [],
+                        eliminatedSuspects: []
+                    });
+                    navigateTo('story');
+                }
+            });
+            
 
             elements.buttons.storyContinue.addEventListener('click', () => navigateTo('introStory'));
             elements.buttons.introStoryNext.addEventListener('click', () => navigateTo('cluePopup'));
@@ -2908,12 +2942,7 @@ function saveGameState() {
                 });
             }
 
-            function init() {
-                navigateTo('loading');
-                preloadAssets(() => {
-                    navigateTo('welcome');
-                });
-            }
+            
 
             init();
         });
